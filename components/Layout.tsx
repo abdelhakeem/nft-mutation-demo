@@ -13,7 +13,7 @@ const Layout = ({ children, network, updateNetwork }: LayoutProps) => {
   return (
     <WalletModalProvider>
       <Navbar network={network} updateNetwork={updateNetwork} />
-      <div className="container mx-auto my-2">{children}</div>
+      <div className="container mx-auto my-8">{children}</div>
     </WalletModalProvider>
   );
 };

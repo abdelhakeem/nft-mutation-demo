@@ -75,7 +75,7 @@ const useNFTs = () => {
     [connection, wallet]
   );
 
-  return useSWR(`${wallet?.publicKey}/nfts`, () =>
+  return useSWR(`${connection.rpcEndpoint}/${wallet?.publicKey}/nfts`, () =>
     fetcher(connection, wallet, metaplex)
   );
 };

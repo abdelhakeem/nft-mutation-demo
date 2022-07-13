@@ -1,8 +1,6 @@
 import {
-  bundlrStorage,
   Metaplex,
   Nft,
-  walletAdapterIdentity,
 } from "@metaplex-foundation/js";
 import {
   Key,
@@ -16,8 +14,8 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import bs58 from "bs58";
-import { useMemo } from "react";
 import useSWR from "swr";
+import useMetaplex from "./useMetaplex";
 
 const fetcher = async (
   connection: Connection,
@@ -61,19 +59,7 @@ const fetcher = async (
 const useNFTs = () => {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
-  const metaplex = useMemo(
-    () =>
-      wallet
-        ? Metaplex.make(connection)
-            .use(walletAdapterIdentity(wallet))
-            .use(
-              bundlrStorage({
-                address: "https://devnet.bundlr.network",
-              })
-            )
-        : undefined,
-    [connection, wallet]
-  );
+  const metaplex = useMetaplex();
 
   return useSWR(`${connection.rpcEndpoint}/${wallet?.publicKey}/nfts`, () =>
     fetcher(connection, wallet, metaplex)

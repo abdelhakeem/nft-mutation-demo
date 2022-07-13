@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 
 type NFTItemProps = {
   nft: Nft;
+  pickNFT: Function;
 };
 
-const NFTItem = ({ nft }: NFTItemProps) => {
+const NFTItem = ({ nft, pickNFT }: NFTItemProps) => {
   const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
@@ -32,10 +33,12 @@ const NFTItem = ({ nft }: NFTItemProps) => {
         />
       </figure>
       <div className="card-body">
-        <h2 className="card-title">{nft.metadata.name}</h2>
+        <h2 className="card-title">{nft.name}</h2>
         <p>{nft.metadata.description}</p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">Edit</button>
+          <button className="btn btn-primary" onClick={() => pickNFT(nft)}>
+            Edit
+          </button>
         </div>
       </div>
     </div>

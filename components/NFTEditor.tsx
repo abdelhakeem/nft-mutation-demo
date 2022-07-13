@@ -44,10 +44,6 @@ const NFTEditor = ({ nft }: NFTEditorProps) => {
     }
   };
 
-  if (!metadata) {
-    return <Status type="info" msg="Downloading metadata..." />;
-  }
-
   const handleUpdateMetadata = (name: string, value: string) => {
     setMetadata({
       ...metadata,
@@ -58,6 +54,10 @@ const NFTEditor = ({ nft }: NFTEditorProps) => {
   const handleReset = () => {
     setMetadata(nft.metadata);
   };
+
+  if (!metadata) {
+    return null;
+  }
 
   return (
     <form className="flex flex-col gap-2 my-4" onSubmit={handleSubmit}>

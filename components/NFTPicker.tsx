@@ -7,15 +7,13 @@ type NFTPickerProps = {
 
 const NFTPicker = ({ nfts }: NFTPickerProps) => {
   return (
-    <div>
-      <ul className="flex flex-row justify-center items-center overflow-x-scroll gap-4">
-        {nfts.map((nft) => (
-          <li key={nft.name}>
-            <NFTItem nft={nft} />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="flex flex-row justify-start items-center overflow-x-scroll gap-4">
+      {nfts.map((nft) => (
+        <li key={nft.name}>
+          <NFTItem nft={nft} />
+        </li>
+      ))}
+    </ul>
   );
 };
 

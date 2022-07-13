@@ -18,7 +18,10 @@ const NFTPicker = ({ nfts, pickNFT }: NFTPickerProps) => {
   return (
     <ul className="flex flex-row justify-start items-center overflow-x-scroll gap-4">
       {nfts.map((nft) => (
-        <li key={nft.name} className={pickedNFT === nft ? "opacity-50" : ""}>
+        <li
+          key={nft.name}
+          className={pickedNFT.name === nft.name ? "opacity-50" : ""}
+        >
           <NFTItem nft={nft} pickNFT={handlePickNFT} />
         </li>
       ))}

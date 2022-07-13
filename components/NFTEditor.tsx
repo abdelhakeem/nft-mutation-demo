@@ -1,6 +1,7 @@
 import { JsonMetadata, Nft } from "@metaplex-foundation/js";
 import { FormEvent, useEffect, useState } from "react";
 import useMetaplex from "../hooks/useMetaplex";
+import NFTEditorTextField from "./NFTEditorTextField";
 import Status, { StatusType } from "./Status";
 
 type NFTEditorProps = {
@@ -38,37 +39,61 @@ const NFTEditor = ({ nft }: NFTEditorProps) => {
       setStatus("success");
       setMsg("Successfully updated NFT metadata!");
     } catch (error: any) {
-      setStatus("error")
+      setStatus("error");
       setMsg(`Failed to update NFT metadata: ${error.message}`);
     }
   };
 
   if (!metadata) {
-    return <Status type="info" msg="Downloading metadata..." />
+    return <Status type="info" msg="Downloading metadata..." />;
   }
+
+  const handleUpdateMetadata = (name: string, value: string) => {
+    setMetadata({
+      ...metadata,
+      [name]: value,
+    });
+  };
+
+  const handleReset = () => {
+    setMetadata(nft.metadata);
+  };
 
   return (
     <form className="flex flex-col gap-2 my-4" onSubmit={handleSubmit}>
-      {status !== 'idle' ? <Status type={status} msg={msg} /> : null}
-      {Object.entries(metadata)
-        .filter(([key, value]) => key !== "image" && typeof value === "string")
-        .map(([key, value]) => (
-          <div key={key} className="form-control">
-            <label className="label">{key}</label>
-            <input
-              type="text"
-              className="input input-bordered"
-              value={value as string}
-              onChange={(e) =>
-                setMetadata({
-                  ...metadata,
-                  [key]: e.target.value,
-                })
-              }
-            />
-          </div>
-        ))}
-      <button className="btn btn-primary my-2">Mutate</button>
+      {status !== "idle" ? <Status type={status} msg={msg} /> : null}
+      <NFTEditorTextField
+        name="name"
+        value={metadata.name ?? ""}
+        updateMetadata={handleUpdateMetadata}
+      />
+      <NFTEditorTextField
+        name="symbol"
+        value={metadata.symbol ?? ""}
+        updateMetadata={handleUpdateMetadata}
+      />
+      <NFTEditorTextField
+        name="description"
+        value={metadata.description ?? ""}
+        updateMetadata={handleUpdateMetadata}
+      />
+      <NFTEditorTextField
+        name="external_url"
+        value={metadata.external_url ?? ""}
+        updateMetadata={handleUpdateMetadata}
+      />
+      <div className="flex flex-row justify-end items-center gap-2 my-2">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleReset}
+        >
+          Reset
+        </button>
+        <button type="submit" className="btn btn-primary">
+          Mutate
+        </button>
+      </div>
     </form>
   );
 };

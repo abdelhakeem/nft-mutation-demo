@@ -1,19 +1,11 @@
-import {
-  Metaplex,
-  Nft,
-} from "@metaplex-foundation/js";
-import {
-  Key,
-  Metadata,
-  PROGRAM_ID,
-} from "@metaplex-foundation/mpl-token-metadata";
+import { Metaplex } from "@metaplex-foundation/js";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   AnchorWallet,
   useAnchorWallet,
   useConnection,
 } from "@solana/wallet-adapter-react";
-import { Connection } from "@solana/web3.js";
-import bs58 from "bs58";
+import { Connection, PublicKey } from "@solana/web3.js";
 import useSWR from "swr";
 import useMetaplex from "./useMetaplex";
 
@@ -26,33 +18,19 @@ const fetcher = async (
     return undefined;
   }
 
-  return (
-    await connection.getProgramAccounts(PROGRAM_ID, {
-      filters: [
-        {
-          memcmp: {
-            offset: 0,
-            bytes: bs58.encode(Buffer.from([Key.MetadataV1])),
-          },
-        },
-        {
-          memcmp: {
-            offset: 1,
-            bytes: wallet.publicKey.toBase58(),
-          },
-        },
-      ],
+  const mints = (
+    await connection.getParsedTokenAccountsByOwner(wallet.publicKey, {
+      programId: TOKEN_PROGRAM_ID,
     })
-  ).map(
-    ({ account, pubkey }) =>
-      new Nft(
-        {
-          ...account,
-          publicKey: pubkey,
-          data: Metadata.deserialize(account.data)[0],
-        },
-        metaplex
-      )
+  ).value
+    .map(({ account }) => account.data.parsed.info)
+    .filter(
+      (info) => info.tokenAmount.decimals === 0 && +info.tokenAmount.amount > 0
+    )
+    .map((info) => new PublicKey(info.mint));
+
+  return (await metaplex.nfts().findAllByMintList(mints)).filter(
+    (nft) => nft !== null && nft.updateAuthority.equals(wallet.publicKey)
   );
 };
 
